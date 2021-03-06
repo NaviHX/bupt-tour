@@ -34,4 +34,42 @@ UI采用`Qt 6.0.0`绘制
 |Tour|根据用户输入的信息处理最短路径|
 |User|导航用户，保存路线信息，模拟进度|
 
+## 成员与方法说明
 
+## 项目规范
+
+序言格式，新建源代码文件使用
+```
+/*
+ * Copyright © 2021 BUPT-Tour. All rights reserved.
+ * @author : {NAME} 
+ * @date : {YEAR}-{MONTH}-{DATE}
+ * @file : {Filename}
+ * @description : 
+*/
+```
+
+序言修改声明，修改源代码使用
+```
+/*
+ * @modified by : {NAME}
+ * @data : {YEAR}-{MONTH}-{DATE}
+ * @description : 
+*/
+```
+
+类声明，写于类前
+```
+/*
+ * @class       : 
+ * @description : 
+*/
+```
+
+函数声明，写于函数前
+```
+/*
+ * @class       : 
+ * @description : 
+*/
+```
