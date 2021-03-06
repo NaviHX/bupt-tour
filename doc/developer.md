@@ -24,6 +24,7 @@ UI采用`Qt 6.0.0`绘制
 |Loc|n*2维向量，存储地点的坐标|`std::vetcor<std::vector<int>>`|
 |Distance|n*n矩阵，地点间的距离(不可达设置为-1)|`std::vector<vector<long long>>`|
 |Congestion|n*n矩阵,拥挤程度(1-100)|`std::vector<vector<int>>`|
+|DistanceBike|n*n矩阵，使用自行车道路时地点间的距离(不可达设置为-1)|`std::vector<vector<long long>>`|
 |Direction|n*n矩阵，导航方向(使用int枚举)|`std::vector<vector<int>>`|
 |Hint|n*n矩阵，导航提示语|`std::vector<vector<std::string>>`|
 |Speed|步行距离/单位时间|`int`|
