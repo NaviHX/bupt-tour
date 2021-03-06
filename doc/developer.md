@@ -72,7 +72,7 @@ UI采用`Qt 6.0.0`绘制
 函数声明，写于函数前
 ```
 /*
- * @class       : 
+ * @function    : 
  * @description : 
 */
 ```
