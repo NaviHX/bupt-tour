@@ -21,6 +21,7 @@ UI采用`Qt 6.0.0`绘制
 |-|-|-|
 |Building|n维向量，存储建筑名|`std::vector<std::string>`|
 |Id|哈希表，从建筑名到编号的映射|`std::map<std::string, int>`|
+|Loc|n*2维向量，存储地点的坐标|`std::vetcor<std::vector<int>>`|
 |Distance|n*n矩阵，地点间的距离(不可达设置为-1)|`std::vector<vector<long long>>`|
 |Congestion|n*n矩阵,拥挤程度(1-100)|`std::vector<vector<int>>`|
 |Direction|n*n矩阵，导航方向(使用int枚举)|`std::vector<vector<int>>`|
