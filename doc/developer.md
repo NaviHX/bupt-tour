@@ -19,11 +19,14 @@ UI采用`Qt 6.0.0`绘制
 
 |Name|Description|Data Structure|
 |-|-|-|
-|Building|n维向量，存储建筑名|`stl::vector<std::string>`|
-|Id|哈希表，从建筑名到编号的映射|`stl::map<std::string, int>`|
-|Distance|n*n矩阵，地点间的距离(不可达设置为-1)|`stl::vector<vector<long long>>`|
-|Direction|n*n矩阵，导航方向(使用int枚举)|`stl::vector<vector<int>>`|
-|Hint|n*n矩阵，导航提示语|`stl::vector<vector<std::string>>`|
+|Building|n维向量，存储建筑名|`std::vector<std::string>`|
+|Id|哈希表，从建筑名到编号的映射|`std::map<std::string, int>`|
+|Distance|n*n矩阵，地点间的距离(不可达设置为-1)|`std::vector<vector<long long>>`|
+|Congestion|n*n矩阵,拥挤程度(1-100)|`std::vector<vector<int>>`|
+|Direction|n*n矩阵，导航方向(使用int枚举)|`std::vector<vector<int>>`|
+|Hint|n*n矩阵，导航提示语|`std::vector<vector<std::string>>`|
+|Speed|步行距离/单位时间|`int`|
+|TimeInterval|刷新时间间隔，即单位时间(单位为秒)|`int`|
 
 ## 模块
 
@@ -53,7 +56,7 @@ UI采用`Qt 6.0.0`绘制
 ```
 /*
  * @modified by : {NAME}
- * @data : {YEAR}-{MONTH}-{DATE}
+ * @date        : {YEAR}-{MONTH}-{DATE}
  * @description : 
 */
 ```
