@@ -90,7 +90,7 @@ t // 一个整数 时间间隔（秒）
 |-|-|-|
 |getX|`int`|获取X坐标|
 |getY|`int`|获取Y坐标|
-|move|`SLOT void`|移动UI位置(根据下一个目标点以及剩余的步数)|
+|move|`SLOT void`|移动UI位置(根据下一个目标点以及剩余的步数),如果仍有路径没有走完，返回1，否则返回0|
 |getSpot|`std::vector<std::pair<int, int>>`|获取用户附近地点和距离|
 
 成员

@@ -24,14 +24,15 @@ class User
 public:
     int getX();
     int getY();
-    void move();
+    int move();
     std::vector<std::pair<int, int>> getSpot();
 
-    User(std::stack<std::pair<std::string, int>>& path);
+    User(std::stack<std::pair<int, int>>& path);
 
 private:
     int coordX;
     int coordY;
+    std::stack<std::pair<int, int>> myPath;
 };
 
 #endif

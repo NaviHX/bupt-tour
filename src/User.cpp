@@ -9,14 +9,20 @@
 #include "User.h"
 #include "global.h"
 #include <stack>
+#include <utility>
 
 /*
  * @function    : User
  * @description : 初始化，储存最短路径信息，初始化坐标为起点坐标
 */
-User::User(std::stack<std::pair<std::string, int>>& path)
+User::User(std::stack<std::pair<int, int>>& path)
 {
-
+    if(!path.empty())
+    {
+        myPath=path;
+        coordX=Loc[path.top().first][0];
+        coordY=Loc[path.top().first][1];
+    }
 }
 
 /*
@@ -34,7 +40,7 @@ User::~User()
 */
 int User::getX()
 {
-
+    return coordX;
 }
 
 /*
@@ -43,14 +49,19 @@ int User::getX()
 */
 int User::getY()
 {
-
+    return coordY;
 }
 
 /*
  * @function    : move
  * @description : 根据最短路径信息更改坐标
+ *                首先判断路径是否走完，走完返回0，否则返回1
+ *                检查栈顶元素pair的第二个元素（假设为step）是否为1，不为0就从全局变量loc中获取目标坐标（目标为pair第一个元素）
+ *                计算当前坐标和目标坐标的差，移动差值/step，更新用户坐标值，step-1
+ *                如果为，表明还有一步就到达目标点，直接将坐标值更改为目标坐标，将栈顶元素出栈
+ *                所有计算类型始终为整型
 */
-void User::move()
+int User::move()
 {
 
 }
