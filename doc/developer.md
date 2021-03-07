@@ -30,6 +30,7 @@ UI采用`Qt 6.0.0`绘制
 |Speed|步行距离/单位时间|`int`|
 |RideSpeed|骑行距离/单位时间|`int`|
 |TimeInterval|刷新时间间隔，即单位时间(单位为秒)|`int`|
+|BuildingCnt|总地点数|`int`|
 
 ## 模块
 
