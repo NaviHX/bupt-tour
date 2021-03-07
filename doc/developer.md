@@ -35,28 +35,11 @@ UI采用`Qt 6.0.0`绘制
 
 |Name|Description|
 |-|-|
-|MainWindow|主窗口，承担UI绘制，处理用户输入的功能，继承自Qt主窗口|
-|Timer|模拟计时器，每隔一段时间触发模拟进度推进和UI刷新|
+|MainWindow|主窗口，承担UI绘制，处理用户输入的功能，继承自Qt主窗口,内部含有Qt计时器类|
 |Tour|根据用户输入的信息处理最短路径|
 |User|导航用户，保存路线信息，模拟进度|
 
 ## 类说明
-
-### Timer
-
-控制用户位置的刷新频率
-
-方法
-|Name|Type|Description|
-|-|-|-|
-|timeOut|`SIGNAL`|超时信号，经过一个计时间隔后触发|
-|start|`SLOT void`|启动计时器|
-|pause|`SLOT void`|计时器暂停|
-|reset|`SLOT void`|计时器重置|
-
-成员
-|Name|Type|Description|
-|-|-|-|
 
 ### User
 
