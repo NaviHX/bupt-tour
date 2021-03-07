@@ -21,6 +21,9 @@ public:
     std::stack<std::pair<int, int>> getCongestionPath(int s, int e);
     std::stack<std::pair<int, int>> getBiketPath(int s, int e);
     std::stack<std::pair<int, int>> getSerialPath(std::vector<int> plots, std::vector<int> tactics);
+
+    Tour();
+
 };
 
 #endif
