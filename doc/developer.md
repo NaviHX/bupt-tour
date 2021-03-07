@@ -26,11 +26,49 @@ UI采用`Qt 6.0.0`绘制
 |Congestion|n*n矩阵,拥挤程度(1-10)|`std::vector<vector<int>>`|
 |DistanceBike|n*n矩阵，使用自行车道路时地点间的距离(不可达设置为-1)|`std::vector<vector<long long>>`|
 |Direction|n*n矩阵，导航方向(使用int枚举)|`std::vector<vector<int>>`|
-|Hint|n*n矩阵，导航提示语|`std::vector<vector<std::string>>`|
+|Hint|n*n矩阵，导航提示语（暂不支持）|`std::vector<vector<std::string>>`|
 |Speed|步行距离/单位时间|`int`|
 |RideSpeed|骑行距离/单位时间|`int`|
 |TimeInterval|刷新时间间隔，即单位时间(单位为秒)|`int`|
 |BuildingCnt|总地点数|`int`|
+
+所有全局变量从配置文件`config`中读入
+
+### 配置文件格式
+
+```
+n // 一个整数，表示地点数
+XXX1
+...
+XXXn // n行，地点名
+loc11 loc12
+...
+locn1 locn2 // n行 每行两个整数 分别为X坐标与Y坐标
+0   321 ... 541
+.             .
+.             .
+.             .
+321 123 ...   0 // n行 n列 代表距离的邻接矩阵
+0   5   ...   5
+.             .
+.             .
+.             .
+3   1   ...   0 // n行 n列 代表拥挤度的邻接矩阵
+0   321 ... 541
+.             .
+.             .
+.             .
+321 123 ...   0 // n行 n列 代表自行车道路的距离的邻接矩阵
+0   4   ...   4
+.             .
+.             .
+.             .
+3   1   ...   0 // n行 n列 代表方向的邻接矩阵
+v // 一个整数 步行速度
+rv // 一个整数 骑行速度
+t // 一个整数 时间间隔（秒）
+// EOF
+```
 
 ## 模块
 
