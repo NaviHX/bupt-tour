@@ -7,7 +7,22 @@
 */
 
 #include "Tour.h"
-#include "global.h"
+#include <string>
+#include <map>
+
+
+std::vector<std::string> Building;
+std::map<std::string, int> Id;
+std::vector<std::vector<int>> Loc;
+std::vector<std::vector<long long>> Distance;
+std::vector<std::vector<int>> Congestion;
+std::vector<std::vector<long long>> DistanceBike;
+std::vector<std::vector<int>> Direction;
+std::vector<std::vector<std::string>> Hint;
+int Speed;
+int RideSpeed;
+int TimeInterval;
+int BuildingCnt;
 
 /*
  * @function    : Tour

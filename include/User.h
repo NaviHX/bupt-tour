@@ -27,7 +27,11 @@ public:
     void move();
     std::vector<std::pair<int, int>> getSpot();
 
-    User();
+    User(std::stack<std::pair<std::string, int>>& path);
+
+private:
+    int coordX;
+    int coordY;
 };
 
 #endif

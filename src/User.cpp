@@ -8,12 +8,13 @@
 
 #include "User.h"
 #include "global.h"
+#include <stack>
 
 /*
  * @function    : User
  * @description : 初始化，储存最短路径信息，初始化坐标为起点坐标
 */
-User::User()
+User::User(std::stack<std::pair<std::string, int>>& path)
 {
 
 }
