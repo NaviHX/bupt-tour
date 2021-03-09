@@ -44,7 +44,11 @@ Tour::~Tour()
 
 /*
  * @function    : getShortPath
- * @description : 直接计算最短路，将从终点到起点的路径依次压入栈中，计算走两个相邻地点间所需的时间间隔
+ * @description : 直接计算最短路，将从终点到起点的路径依次压入栈中，
+ *                计算走两个相邻地点间所需的时间间隔。注意，应该将
+ *                起点一起压入栈中，其所需的计时间隔设定为0。
+ *                pair值定义详见开发文档
+ * 
 */
 std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
 {
