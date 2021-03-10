@@ -7,29 +7,46 @@
  *                输入的功能，继承自Qt主窗口
 */
 
-#pragma once
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/qaction.h>
+#include <QtCore/QTimer>
+
+#include <vector>
+
+#include "Tour.h"
+#include "User.h"
 
 class MainWindow : public QMainWindow
 {
 
     Q_OBJECT;
 
-signals:
-    void startTimer();
-    void pauseTimer();
-    void resetTimer();
-
 public slots:
     void addUser();
-    void moveUser();
-    void deleteUser();
+    void startTimer();
+    void pauseTimer();
+    void showHelp();
 
 public:
-    MainWindow();
+    MainWindow(QWidget* parent);
+
+private:
+    void update();
+    bool isTimerStart();
+
+    QAction* addOneUser;
+    QAction* start;
+    QAction* pause;
+    QAction* help;
+
+    QTimer* timer;
+    bool timerStatus;
+
+    Tour* myTour;
+    std::vector<User*> myUsers;
 };
 
 #endif

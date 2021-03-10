@@ -23,7 +23,7 @@ public:
     std::stack<std::pair<int, int>> getSerialPath(std::vector<int> plots, std::vector<int> tactics);
 
     Tour();
-
+    ~Tour();
 };
 
 #endif
