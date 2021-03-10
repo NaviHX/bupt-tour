@@ -13,15 +13,16 @@
 
 /*
  * @function    : User
- * @description : 初始化，储存最短路径信息，初始化坐标为起点坐标
+ * @description : 初始化，储存最短路径信息，初始化坐标为起点坐标，将起点从栈中弹出
 */
-User::User(std::stack<std::pair<int, int>>& path)
+User::User(std::stack<std::pair<int, int>> &path)
 {
-    if(!path.empty())
+    if (!path.empty())
     {
-        myPath=path;
-        coordX=Loc[path.top().first][0];
-        coordY=Loc[path.top().first][1];
+        myPath = path;
+        coordX = Loc[path.top().first][0];
+        coordY = Loc[path.top().first][1];
+        myPath.pop();
     }
 }
 
@@ -31,7 +32,6 @@ User::User(std::stack<std::pair<int, int>>& path)
 */
 User::~User()
 {
-
 }
 
 /*
@@ -63,14 +63,29 @@ int User::getY()
 */
 int User::move()
 {
+    if (myPath.empty())
+        return 0;
 
+    auto &temp = myPath.top();
+    if (temp.second > 1)
+    {
+        coordX -= (Loc[temp.first][0] - coordX) / temp.second;
+        coordY -= (Loc[temp.first][1] - coordY) / temp.second;
+        temp.second--;
+    }
+    else
+    {
+        coordX = Loc[temp.first][0];
+        coordY = Loc[temp.first][1];
+        myPath.pop();
+    }
+    return 1;
 }
 
 /*
  * @function    : getSpot
- * @description : 找到附近的地点。从当前的目的地开始，寻找至多经过一个地点可达的所有地点
+ * @description : 找到附近的地点。从当前的目的地开始(栈顶元素的第一个量)，寻找至多经过一个地点可达的所有地点
 */
 std::vector<std::pair<int, int>> User::getSpot()
 {
-
 }
