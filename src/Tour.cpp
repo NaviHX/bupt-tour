@@ -7,22 +7,34 @@
 */
 
 #include "Tour.h"
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <map>
+#include <queue>
+#include <cmath>
 
+#define INF 0x7fffffffffffffff
 
 std::vector<std::string> Building;
 std::map<std::string, int> Id;
 std::vector<std::vector<int>> Loc;
-std::vector<std::vector<long long>> Distance;
-std::vector<std::vector<int>> Congestion;
-std::vector<std::vector<long long>> DistanceBike;
-std::vector<std::vector<int>> Direction;
-std::vector<std::vector<std::string>> Hint;
+std::vector<std::vector<std::pair<int, long long>>> Distance;
+std::vector<std::vector<bool>> Visual;
+std::vector<std::vector<std::pair<int, int>>> Congestion;
+std::vector<std::vector<std::pair<int, long long>>> DistanceBike;
+std::vector<std::vector<bool>> VisualBike;
+std::vector<std::vector<std::pair<int, int>>> Direction;
+std::vector<std::vector<std::pair<int, std::string>>> Hint;
 int Speed;
 int RideSpeed;
 int TimeInterval;
 int BuildingCnt;
+
+// 最短路算法所需
+static int pre[1001];
+static long long dis[1001];
+static int turns[1001];
 
 /*
  * @function    : Tour
@@ -30,7 +42,58 @@ int BuildingCnt;
 */
 Tour::Tour()
 {
+    std::ifstream configFile;
+    try
+    {
+        configFile.open("config", std::ios::in);
+        int roadCnt, cycRoadCnt;
 
+        // 初始化总数，速度，刷新时间
+        configFile >> BuildingCnt >> roadCnt >> cycRoadCnt;
+        configFile >> Speed >> RideSpeed;
+        configFile >> TimeInterval;
+
+        // 初始化地点信息 前三项
+        for (int i = 0; i < BuildingCnt; i++)
+        {
+            std::string temp;
+            int x, y, level;
+            configFile >> temp >> x >> y >> level;
+            std::vector<int> v(2);
+            v[0] = x, v[1] = y;
+            // 显示级别暂不使用，丢弃level值
+            Building.push_back(temp);
+            Loc.push_back(v);
+            Id.insert(std::pair<std::string, int>(temp, i));
+        }
+
+        // 初始化路径信息
+        Distance.resize(BuildingCnt);
+        DistanceBike.resize(BuildingCnt);
+        Visual.resize(BuildingCnt);
+        VisualBike.resize(BuildingCnt);
+        for (int i = 0; i < roadCnt; i++)
+        {
+            int from, to, weight, con, vis;
+            configFile >> from >> to >> weight >> con >> vis;
+            Distance[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
+            Visual[from].push_back(vis);
+            Congestion[from].push_back(std::pair<int, int>(to, con));
+        }
+        for (int i = 0; i < cycRoadCnt; i++)
+        {
+            // 丢弃con
+            int from, to, weight, con, vis;
+            configFile >> from >> to >> weight >> con >> vis;
+            DistanceBike[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
+            VisualBike[from].push_back(vis);
+        }
+    }
+    catch (...)
+    {
+        std::cerr << "Cannot find config\n";
+        exit(0);
+    }
 }
 
 /*
@@ -39,7 +102,6 @@ Tour::Tour()
 */
 Tour::~Tour()
 {
-
 }
 
 /*
@@ -52,7 +114,51 @@ Tour::~Tour()
 */
 std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
 {
-
+    std::stack<std::pair<int, int>> res;
+    std::queue<int> q;
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        pre[i] = INF;
+    }
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        dis[i] = INF;
+    }
+    dis[s] = 0;
+    q.push(s);
+    while (!q.empty())
+    {
+        int temp = q.front();
+        for (int i = 0; i < Distance[temp].size(); i++)
+        {
+            int to = Distance[temp][i].first;
+            long long weight = Distance[temp][i].second;
+            if (dis[to] > dis[temp] + weight)
+            {
+                q.push(to);
+                dis[to] = dis[temp] + weight;
+                pre[to] = temp;
+                turns[to] = ceil((double)weight / Speed);
+                if (Visual[temp][i] == false)
+                {
+                    // 取反，作为不显示路径的标记
+                    pre[to] = -temp;
+                } // if end
+            }     // if end
+        }         // for end
+        q.pop();
+    } // while end
+    if (pre[e] == INF)
+    {
+        return res;
+    }
+    int cur = e;
+    while (cur != s)
+    {
+        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        cur = abs(pre[cur]);
+    }
+    res.push(std::pair<int, int>(s, 0));
 }
 
 /*
@@ -61,7 +167,51 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
 {
-
+    std::stack<std::pair<int, int>> res;
+    std::queue<int> q;
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        pre[i] = INF;
+    }
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        dis[i] = INF;
+    }
+    dis[s] = 0;
+    q.push(s);
+    while (!q.empty())
+    {
+        int temp = q.front();
+        for (int i = 0; i < Distance[temp].size(); i++)
+        {
+            int to = Distance[temp][i].first;
+            long long weight = Distance[temp][i].second * Congestion[temp][i].second / 5;
+            if (dis[to] > dis[temp] + weight)
+            {
+                q.push(to);
+                dis[to] = dis[temp] + weight;
+                pre[to] = temp;
+                turns[to] = ceil((double)weight / Speed);
+                if (Visual[temp][i] == false)
+                {
+                    // 取反，作为不显示路径的标记
+                    pre[to] = -temp;
+                } // if end
+            }     // if end
+        }         // for end
+        q.pop();
+    } // while end
+    if (pre[e] == INF)
+    {
+        return res;
+    }
+    int cur = e;
+    while (cur != s)
+    {
+        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        cur = abs(pre[cur]);
+    }
+    res.push(std::pair<int, int>(s, 0));
 }
 
 /*
@@ -70,7 +220,51 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
 */
 std::stack<std::pair<int, int>> getBiketPath(int s, int e)
 {
-
+    std::stack<std::pair<int, int>> res;
+    std::queue<int> q;
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        pre[i] = INF;
+    }
+    for (int i = 0; i < BuildingCnt; i++)
+    {
+        dis[i] = INF;
+    }
+    dis[s] = 0;
+    q.push(s);
+    while (!q.empty())
+    {
+        int temp = q.front();
+        for (int i = 0; i < DistanceBike[temp].size(); i++)
+        {
+            int to = Distance[temp][i].first;
+            long long weight = DistanceBike[temp][i].second;
+            if (dis[to] > dis[temp] + weight)
+            {
+                q.push(to);
+                dis[to] = dis[temp] + weight;
+                pre[to] = temp;
+                turns[to] = ceil((double)weight / Speed);
+                if (Visual[temp][i] == false)
+                {
+                    // 取反，作为不显示路径的标记
+                    pre[to] = -temp;
+                } // if end
+            }     // if end
+        }         // for end
+        q.pop();
+    } // while end
+    if (pre[e] == INF)
+    {
+        return res;
+    }
+    int cur = e;
+    while (cur != s)
+    {
+        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        cur = abs(pre[cur]);
+    }
+    res.push(std::pair<int, int>(s, 0));
 }
 
 /*
@@ -79,5 +273,4 @@ std::stack<std::pair<int, int>> getBiketPath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std::vector<int> tactics)
 {
-
 }
