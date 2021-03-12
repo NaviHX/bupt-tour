@@ -12,15 +12,16 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <utility>
 
 extern std::vector<std::string> Building;
 extern std::map<std::string, int> Id;
 extern std::vector<std::vector<int>> Loc;
-extern std::vector<std::vector<long long>> Distance;
-extern std::vector<std::vector<int>> Congestion;
-extern std::vector<std::vector<long long>> DistanceBike;
-extern std::vector<std::vector<int>> Direction;
-extern std::vector<std::vector<std::string>> Hint;
+extern std::vector<std::vector<std::pair<int, long long>>> Distance;
+extern std::vector<std::vector<std::pair<int, int>>> Congestion;
+extern std::vector<std::vector<std::pair<int, long long>>> DistanceBike;
+extern std::vector<std::vector<std::pair<int, int>>> Direction;
+extern std::vector<std::vector<std::pair<int, std::string>>> Hint;
 extern int Speed;
 extern int RideSpeed;
 extern int TimeInterval;
