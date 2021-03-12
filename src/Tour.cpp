@@ -155,7 +155,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
     int cur = e;
     while (cur != s)
     {
-        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        res.push(std::pair<int, int>((pre[cur] < 0 ? -cur : cur), turns[cur]));
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
@@ -208,7 +208,7 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
     int cur = e;
     while (cur != s)
     {
-        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        res.push(std::pair<int, int>((pre[cur] < 0 ? -cur : cur), turns[cur]));
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
@@ -218,7 +218,7 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
  * @function    : getBiketPath
  * @description : 计算自行车地图的最短路
 */
-std::stack<std::pair<int, int>> getBiketPath(int s, int e)
+std::stack<std::pair<int, int>> getBikePath(int s, int e)
 {
     std::stack<std::pair<int, int>> res;
     std::queue<int> q;
@@ -261,7 +261,7 @@ std::stack<std::pair<int, int>> getBiketPath(int s, int e)
     int cur = e;
     while (cur != s)
     {
-        res.push(std::pair<int, int>((pre[cur]<0?-cur:cur), turns[cur]));
+        res.push(std::pair<int, int>((pre[cur] < 0 ? -cur : cur), turns[cur]));
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
@@ -273,4 +273,42 @@ std::stack<std::pair<int, int>> getBiketPath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std::vector<int> tactics)
 {
+    std::stack<std::pair<int, int>> res, mid, mid2;
+    for (int i = tactics.size() - 1; i >= 0; i--)
+    {
+        int t = tactics[i];
+        int s = plots[i], e = plots[i + 1];
+        switch (i)
+        {
+        case 1:
+            mid = getShortPath(s, e);
+            break;
+        case 2:
+            mid = getCongestionPath(s, e);
+            break;
+        case 3:
+            mid = getBikePath(s, e);
+            break;
+        default:
+            break;
+        }
+        if (mid.empty())
+        {
+            std::stack<std::pair<int, int>> emptyStack;
+            return emptyStack;
+        }
+        while (!mid.empty())
+        {
+            std::pair<int, int> p = mid.top();
+            mid2.push(p);
+            mid.pop();
+        }
+        while (!mid2.empty())
+        {
+            std::pair<int, int> p = mid2.top();
+            res.push(p);
+            mid2.pop();
+        }
+    }
+    return res;
 }
