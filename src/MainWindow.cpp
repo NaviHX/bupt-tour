@@ -60,10 +60,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QVBoxLayout *layout = new QVBoxLayout(centr);
     // 初始化绘图区
     canvas = new MapCanvas(this, myUsers);
-    layout->addWidget(canvas);
 
     // 初始化日志输出区
     console = new QTextEdit(this);
+    console->setFixedSize(950,300);
+
+    layout->addWidget(canvas);
     layout->addWidget(console);
 
     centr->setLayout(layout);
@@ -130,7 +132,7 @@ void MainWindow::addUser()
     ok=false;
     for(int i=0;i<myUsers.size();i++)
     {
-        if(myUsers[i]!=nullptr)
+        if(myUsers[i]==nullptr)
         {
             myUsers[i]=new User(st);
             ok=true;

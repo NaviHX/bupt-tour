@@ -78,9 +78,12 @@ Tour::Tour()
         {
             int from, to, weight, con, vis;
             configFile >> from >> to >> weight >> con >> vis;
-            Distance[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
+            Distance[from].push_back(std::pair<int, long long>(to, weight));
             Visual[from].push_back(vis);
             Congestion[from].push_back(std::pair<int, int>(to, con));
+            Distance[to].push_back(std::pair<int, long long>(from,weight));
+            Visual[to].push_back(vis);
+            Congestion[to].push_back(std::pair<int, int>(from, con));
         }
         for (int i = 0; i < cycRoadCnt; i++)
         {
@@ -89,6 +92,8 @@ Tour::Tour()
             configFile >> from >> to >> weight >> con >> vis;
             DistanceBike[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
             VisualBike[from].push_back(vis);
+            DistanceBike[to].push_back(std::pair<int, long long>(from, static_cast<long long>(weight)));
+            VisualBike[to].push_back(vis);
         }
     }
     catch (...)
@@ -290,13 +295,13 @@ std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std:
         int s = plots[i], e = plots[i + 1];
         switch (t)
         {
-        case 1:
+        case 0:
             mid = getShortPath(s, e);
             break;
-        case 2:
+        case 1:
             mid = getCongestionPath(s, e);
             break;
-        case 3:
+        case 2:
             mid = getShortPath(s, e);
             break;
         default:

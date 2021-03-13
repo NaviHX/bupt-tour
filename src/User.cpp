@@ -69,8 +69,8 @@ int User::move()
     auto &temp = myPath.top();
     if (temp.second > 1)
     {
-        coordX -= (Loc[abs(temp.first)][0] - coordX) / temp.second;
-        coordY -= (Loc[abs(temp.first)][1] - coordY) / temp.second;
+        coordX += (Loc[abs(temp.first)][0] - coordX) / temp.second;
+        coordY += (Loc[abs(temp.first)][1] - coordY) / temp.second;
         temp.second--;
     }
     else
