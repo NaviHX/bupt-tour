@@ -13,11 +13,14 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/qaction.h>
 #include <QtCore/QTimer>
+#include <QtWidgets/QTextEdit>
+#include <QtCore/QStringList>
 
 #include <vector>
 
 #include "Tour.h"
 #include "User.h"
+#include "MapCanvas.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,8 +36,10 @@ public slots:
 public:
     MainWindow(QWidget* parent);
 
+    std::vector<User*> myUsers;
+
 private:
-    void update();
+    void refresh();
     bool isTimerStart();
 
     QAction* addOneUser;
@@ -42,11 +47,15 @@ private:
     QAction* pause;
     QAction* help;
 
+    QStringList plotList;
+
+    MapCanvas* canvas;
+    QTextEdit* console;
+
     QTimer* timer;
     bool timerStatus;
 
     Tour* myTour;
-    std::vector<User*> myUsers;
 };
 
 #endif

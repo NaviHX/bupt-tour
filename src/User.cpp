@@ -69,14 +69,14 @@ int User::move()
     auto &temp = myPath.top();
     if (temp.second > 1)
     {
-        coordX -= (Loc[temp.first][0] - coordX) / temp.second;
-        coordY -= (Loc[temp.first][1] - coordY) / temp.second;
+        coordX += (Loc[abs(temp.first)][0] - coordX) / temp.second;
+        coordY += (Loc[abs(temp.first)][1] - coordY) / temp.second;
         temp.second--;
     }
     else
     {
-        coordX = Loc[temp.first][0];
-        coordY = Loc[temp.first][1];
+        coordX = Loc[abs(temp.first)][0];
+        coordY = Loc[abs(temp.first)][1];
         myPath.pop();
     }
     return 1;
@@ -88,4 +88,15 @@ int User::move()
 */
 std::vector<std::pair<int, int>> User::getSpot()
 {
+}
+
+/*
+ * @function    : getDes
+ * @description : 
+*/
+int User::getDes()
+{
+    if(myPath.empty())
+        return -1;
+    return myPath.top().first;
 }

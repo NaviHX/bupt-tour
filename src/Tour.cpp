@@ -14,7 +14,8 @@
 #include <queue>
 #include <cmath>
 
-#define INF 0x7fffffffffffffff
+#define INFL 0x7fffffffffffffff
+#define INF 0x7fffffff
 
 std::vector<std::string> Building;
 std::map<std::string, int> Id;
@@ -72,13 +73,17 @@ Tour::Tour()
         DistanceBike.resize(BuildingCnt);
         Visual.resize(BuildingCnt);
         VisualBike.resize(BuildingCnt);
+        Congestion.resize(BuildingCnt);
         for (int i = 0; i < roadCnt; i++)
         {
             int from, to, weight, con, vis;
             configFile >> from >> to >> weight >> con >> vis;
-            Distance[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
+            Distance[from].push_back(std::pair<int, long long>(to, weight));
             Visual[from].push_back(vis);
             Congestion[from].push_back(std::pair<int, int>(to, con));
+            Distance[to].push_back(std::pair<int, long long>(from,weight));
+            Visual[to].push_back(vis);
+            Congestion[to].push_back(std::pair<int, int>(from, con));
         }
         for (int i = 0; i < cycRoadCnt; i++)
         {
@@ -87,6 +92,8 @@ Tour::Tour()
             configFile >> from >> to >> weight >> con >> vis;
             DistanceBike[from].push_back(std::pair<int, long long>(to, static_cast<long long>(weight)));
             VisualBike[from].push_back(vis);
+            DistanceBike[to].push_back(std::pair<int, long long>(from, static_cast<long long>(weight)));
+            VisualBike[to].push_back(vis);
         }
     }
     catch (...)
@@ -122,7 +129,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
     }
     for (int i = 0; i < BuildingCnt; i++)
     {
-        dis[i] = INF;
+        dis[i] = INFL;
     }
     dis[s] = 0;
     q.push(s);
@@ -159,6 +166,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -212,6 +220,7 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -265,6 +274,7 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -273,21 +283,26 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std::vector<int> tactics)
 {
+    if(plots.size()<=1)
+    {
+        std::stack<std::pair<int, int>> emptyStack;
+        return emptyStack;
+    }
     std::stack<std::pair<int, int>> res, mid, mid2;
     for (int i = tactics.size() - 1; i >= 0; i--)
     {
         int t = tactics[i];
         int s = plots[i], e = plots[i + 1];
-        switch (i)
+        switch (t)
         {
-        case 1:
+        case 0:
             mid = getShortPath(s, e);
             break;
-        case 2:
+        case 1:
             mid = getCongestionPath(s, e);
             break;
-        case 3:
-            mid = getBikePath(s, e);
+        case 2:
+            mid = getShortPath(s, e);
             break;
         default:
             break;
