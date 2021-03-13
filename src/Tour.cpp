@@ -14,7 +14,8 @@
 #include <queue>
 #include <cmath>
 
-#define INF 0x7fffffffffffffff
+#define INFL 0x7fffffffffffffff
+#define INF 0x7fffffff
 
 std::vector<std::string> Building;
 std::map<std::string, int> Id;
@@ -72,6 +73,7 @@ Tour::Tour()
         DistanceBike.resize(BuildingCnt);
         Visual.resize(BuildingCnt);
         VisualBike.resize(BuildingCnt);
+        Congestion.resize(BuildingCnt);
         for (int i = 0; i < roadCnt; i++)
         {
             int from, to, weight, con, vis;
@@ -122,7 +124,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
     }
     for (int i = 0; i < BuildingCnt; i++)
     {
-        dis[i] = INF;
+        dis[i] = INFL;
     }
     dis[s] = 0;
     q.push(s);
@@ -159,6 +161,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -212,6 +215,7 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -265,6 +269,7 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
         cur = abs(pre[cur]);
     }
     res.push(std::pair<int, int>(s, 0));
+    return res;
 }
 
 /*
@@ -273,12 +278,17 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std::vector<int> tactics)
 {
+    if(plots.size()<=1)
+    {
+        std::stack<std::pair<int, int>> emptyStack;
+        return emptyStack;
+    }
     std::stack<std::pair<int, int>> res, mid, mid2;
     for (int i = tactics.size() - 1; i >= 0; i--)
     {
         int t = tactics[i];
         int s = plots[i], e = plots[i + 1];
-        switch (i)
+        switch (t)
         {
         case 1:
             mid = getShortPath(s, e);
@@ -287,7 +297,7 @@ std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std:
             mid = getCongestionPath(s, e);
             break;
         case 3:
-            mid = getBikePath(s, e);
+            mid = getShortPath(s, e);
             break;
         default:
             break;

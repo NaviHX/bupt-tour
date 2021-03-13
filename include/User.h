@@ -21,6 +21,7 @@ class User
 public:
     int getX();
     int getY();
+    int getDes();
     int move();
     std::vector<std::pair<int, int>> getSpot();
 
