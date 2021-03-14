@@ -185,6 +185,11 @@ bool MainWindow::isTimerStart()
 
 void MainWindow::printOnCons(const QString &str)
 {
+    if(console->document()->lineCount()>100)
+    {
+        console->clear();
+    }
+
     QTextCursor cursor = console->textCursor();
     cursor.movePosition(QTextCursor::End);
     console->setTextCursor(cursor);
