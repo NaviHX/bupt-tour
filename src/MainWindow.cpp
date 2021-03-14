@@ -24,9 +24,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // 初始化菜单栏
     QMenu *userMenu = menuBar()->addMenu(tr("&User"));
     addOneUser = new QAction(tr("&add one user"), this);
-    findNearby = new QAction(tr("&Find nearby locations"),this);
+    findNearby = new QAction(tr("&Find nearby locations"), this);
+    chDes = new QAction(tr("Change Destination"), this);
     userMenu->addAction(addOneUser);
     userMenu->addAction(findNearby);
+    userMenu->addAction(chDes);
 
     QMenu *timerMenu = menuBar()->addMenu(tr("&Timer"));
     start = new QAction(tr("&Start"), this);
@@ -78,7 +80,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(start, SIGNAL(triggered()), this, SLOT(startTimer()));
     connect(pause, SIGNAL(triggered()), this, SLOT(pauseTimer()));
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
-    connect(findNearby,SIGNAL(triggered()),this,SLOT(findNearbyLoc()));
+    connect(findNearby, SIGNAL(triggered()), this, SLOT(findNearbyLoc()));
+    connect(chDes,SIGNAL(triggered()),this,SLOT(changeDes()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -227,12 +230,67 @@ void MainWindow::findNearbyLoc()
                 this->printOnCons(tr("%1 : %2 meters")
                                       .arg(
                                           QString::fromStdString(Building[l]),
-                                          QString::number(w*10)));
+                                          QString::number(w * 10)));
             }
         }
     }
-    if(!ok)
+    if (!ok)
     {
         this->printOnCons(tr("No User added"));
     }
+}
+
+void MainWindow::changeDes()
+{
+    bool ok = false;
+    QStringList uList;
+    for (int i = 0; i < myUsers.size(); i++)
+    {
+        if (myUsers[i] != nullptr)
+        {
+            ok = true;
+            uList << QString::number(i);
+        }
+    }
+    if (!ok)
+    {
+        this->printOnCons(tr("No user added"));
+        return;
+    }
+    QString text = QInputDialog::getItem(this, tr("select User"), tr("Select which to change"), uList, 0, false, &ok);
+    if (!ok)
+        return;
+    QByteArray ba = text.toLatin1();
+    char *ch = ba.data();
+    int u = ch[0] - '0';
+    int curDes = myUsers[u]->getDes();
+    int interv = myUsers[u]->getInterv();
+    int curX = myUsers[u]->getX();
+    int curY = myUsers[u]->getY();
+    delete myUsers[u];
+
+    QStringList tacList;
+    tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
+    std::vector<int> plots, tact;
+    plots.push_back(curDes);
+    while (true)
+    {
+        bool ok1 = false, ok2 = false;
+        QString p = QInputDialog::getItem(this, tr("Add User"), tr("Select a destination"), plotList, 0, false, &ok1);
+        if (!ok1)
+            break;
+        QString t = QInputDialog::getItem(this, tr("Add User"), tr("Select a tactics"), tacList, 0, false, &ok2);
+        if (!ok2)
+            break;
+        QByteArray ba = t.toLatin1();
+        char *ch = ba.data();
+        plots.push_back(Id[p.toStdString()]);
+        tact.push_back(ch[0] - '1');
+    }
+    std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
+    myUsers[u] = new User(st, curX, curY, curDes, interv);
+
+    std::string *pathStr = getPathStr(st);
+    this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
+    delete pathStr;
 }

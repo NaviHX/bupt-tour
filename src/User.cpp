@@ -26,6 +26,18 @@ User::User(std::stack<std::pair<int, int>> &path)
     }
 }
 
+User::User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv)
+{
+    if (!path.empty())
+    {
+        myPath = path;
+        coordX = x;
+        coordY = y;
+        myPath.pop();
+        myPath.push(std::pair<int,int>(des,interv));
+    }
+}
+
 /*
  * @function    : ~User
  * @description : 析构函数
@@ -129,4 +141,15 @@ int User::getDes()
     if (myPath.empty())
         return -1;
     return myPath.top().first;
+}
+
+/*
+ * @function    : getInterv
+ * @description : 
+*/
+int User::getInterv()
+{
+    if (myPath.empty())
+        return -1;
+    return myPath.top().second;
 }

@@ -22,10 +22,12 @@ public:
     int getX();
     int getY();
     int getDes();
+    int getInterv();
     int move();
     std::vector<std::pair<int, int>> getSpot();
 
     User(std::stack<std::pair<int, int>>& path);
+    User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv);
     ~User();
 
 private:
