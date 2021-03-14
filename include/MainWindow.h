@@ -34,28 +34,30 @@ public slots:
     void showHelp();
 
 public:
-    MainWindow(QWidget* parent);
+    MainWindow(QWidget *parent);
 
-    std::vector<User*> myUsers;
+    std::vector<User *> myUsers;
 
 private:
     void refresh();
     bool isTimerStart();
+    void printOnCons(const QString &str);
+    std::string* getPathStr(std::stack<std::pair<int, int>> &st);
 
-    QAction* addOneUser;
-    QAction* start;
-    QAction* pause;
-    QAction* help;
+    QAction *addOneUser;
+    QAction *start;
+    QAction *pause;
+    QAction *help;
 
     QStringList plotList;
 
-    MapCanvas* canvas;
-    QTextEdit* console;
+    MapCanvas *canvas;
+    QTextEdit *console;
 
-    QTimer* timer;
+    QTimer *timer;
     bool timerStatus;
 
-    Tour* myTour;
+    Tour *myTour;
 };
 
 #endif
