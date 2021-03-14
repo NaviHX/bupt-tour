@@ -162,3 +162,11 @@ bool MainWindow::isTimerStart()
 {
     return timerStatus;
 }
+
+void MainWindow::printOnCons(QString& str)
+{
+    QTextCursor cursor=console->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    console->setTextCursor(cursor);
+    console->insertPlainText(str+'\n');
+}
