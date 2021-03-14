@@ -14,18 +14,19 @@
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QInputDialog>
+#include <QtWidgets/QMessageBox>
 
 #include "global.h"
 #include "MapCanvas.h"
-
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     // 初始化菜单栏
     QMenu *userMenu = menuBar()->addMenu(tr("&User"));
     addOneUser = new QAction(tr("&add one user"), this);
+    findNearby = new QAction(tr("&Find nearby locations"),this);
     userMenu->addAction(addOneUser);
+    userMenu->addAction(findNearby);
 
     QMenu *timerMenu = menuBar()->addMenu(tr("&Timer"));
     start = new QAction(tr("&Start"), this);
@@ -63,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // 初始化日志输出区
     console = new QTextEdit(this);
-    console->setFixedSize(950,300);
+    console->setFixedSize(950, 300);
 
     layout->addWidget(canvas);
     layout->addWidget(console);
@@ -77,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(start, SIGNAL(triggered()), this, SLOT(startTimer()));
     connect(pause, SIGNAL(triggered()), this, SLOT(pauseTimer()));
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
+    connect(findNearby,SIGNAL(triggered()),this,SLOT(findNearbyLoc()));
+
+    this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
 
 void MainWindow::startTimer()
@@ -84,7 +88,7 @@ void MainWindow::startTimer()
     if (!isTimerStart())
     {
         timer->start(TimeInterval * 1000);
-        std::cout << "Timer Start\n";
+        this->printOnCons(tr("Timer Start"));
         timerStatus = true;
     }
 }
@@ -94,6 +98,7 @@ void MainWindow::pauseTimer()
     if (isTimerStart())
     {
         timer->stop();
+        this->printOnCons(tr("Timer Stop"));
         timerStatus = false;
     }
 }
@@ -107,7 +112,7 @@ void MainWindow::addUser()
 {
     pauseTimer();
     QStringList tacList;
-    tacList<<tr("1. shortest")<<tr("2. congestion")<<tr("3. Bike");
+    tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
     std::vector<int> plots, tact;
     bool ok = false;
     QString text = QInputDialog::getItem(this, tr("Add User"), tr("Select where to start"), plotList, 0, false, &ok);
@@ -116,28 +121,36 @@ void MainWindow::addUser()
     plots.push_back(Id[text.toStdString()]);
     while (true)
     {
-        bool ok1=false,ok2=false;
-        QString p=QInputDialog::getItem(this,tr("Add User"),tr("Select a destination"),plotList,0,false,&ok1);
-        if(!ok1)
+        bool ok1 = false, ok2 = false;
+        QString p = QInputDialog::getItem(this, tr("Add User"), tr("Select a destination"), plotList, 0, false, &ok1);
+        if (!ok1)
             break;
-        QString t=QInputDialog::getItem(this,tr("Add User"),tr("Select a tactics"),tacList,0,false,&ok2);
-        if(!ok2)
+        QString t = QInputDialog::getItem(this, tr("Add User"), tr("Select a tactics"), tacList, 0, false, &ok2);
+        if (!ok2)
             break;
-        QByteArray ba=t.toLatin1();
-        char* ch=ba.data();
+        QByteArray ba = t.toLatin1();
+        char *ch = ba.data();
         plots.push_back(Id[p.toStdString()]);
-        tact.push_back(ch[0]-'1');
+        tact.push_back(ch[0] - '1');
     }
-    std::stack<std::pair<int,int>> st=myTour->getSerialPath(plots,tact);
-    ok=false;
-    for(int i=0;i<myUsers.size();i++)
+    std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
+    ok = false;
+    for (int i = 0; i < myUsers.size(); i++)
     {
-        if(myUsers[i]==nullptr)
+        if (myUsers[i] == nullptr)
         {
-            myUsers[i]=new User(st);
-            ok=true;
+            myUsers[i] = new User(st);
+            this->printOnCons(tr("User %1 add").arg(QString::number(i)));
+            std::string *pathStr = getPathStr(st);
+            this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
+            delete pathStr;
+            ok = true;
             break;
         }
+    }
+    if (!ok)
+    {
+        QMessageBox::information(NULL, tr("Warning"), tr("Cannot add user : no mem"), QMessageBox::Yes, QMessageBox::Yes);
     }
 }
 
@@ -152,6 +165,14 @@ void MainWindow::refresh()
             {
                 delete myUsers[i];
                 myUsers[i] = nullptr;
+                this->printOnCons(tr("User %1 arrive at destination").arg(QString::number(i)));
+            }
+            else if (ret > 1)
+            {
+                int plotId = ret - 2;
+                this->printOnCons(tr("User %1 arrive at %2")
+                                      .arg(QString::number(i),
+                                           QString::fromStdString(Building[plotId])));
             }
         }
     }
@@ -161,4 +182,57 @@ void MainWindow::refresh()
 bool MainWindow::isTimerStart()
 {
     return timerStatus;
+}
+
+void MainWindow::printOnCons(const QString &str)
+{
+    if (console->document()->lineCount() > 100)
+    {
+        console->clear();
+    }
+
+    QTextCursor cursor = console->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    console->setTextCursor(cursor);
+    console->insertPlainText(str + '\n');
+}
+
+std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)
+{
+    std::string *res = new std::string;
+    (*res) += Building[abs(st.top().first)];
+    st.pop();
+    while (!st.empty())
+    {
+        (*res) += "->" + Building[abs(st.top().first)];
+        st.pop();
+    }
+    return res;
+}
+
+void MainWindow::findNearbyLoc()
+{
+    this->pauseTimer();
+    bool ok = false;
+    for (int i = 0; i < myUsers.size(); i++)
+    {
+        if (myUsers[i] != nullptr)
+        {
+            ok = true;
+            auto v = myUsers[i]->getSpot();
+            this->printOnCons(tr("User %1 nearby locations :").arg(QString::number(i)));
+            for (int j = 0; j < v.size(); j++)
+            {
+                int l = v[j].first, w = v[j].second;
+                this->printOnCons(tr("%1 : %2 meters")
+                                      .arg(
+                                          QString::fromStdString(Building[l]),
+                                          QString::number(w*10)));
+            }
+        }
+    }
+    if(!ok)
+    {
+        this->printOnCons(tr("No User added"));
+    }
 }

@@ -55,7 +55,7 @@ int User::getY()
 /*
  * @function    : move
  * @description : 根据最短路径信息更改坐标
- *                首先判断路径是否走完，走完返回0，否则返回1
+ *                首先判断路径是否走完，走完返回0，途中返回1，到达一个路径点返回2+路径点id
  *                检查栈顶元素pair的第二个元素（假设为step）是否为1，不为0就从全局变量loc中获取目标坐标（目标为pair第一个元素）
  *                计算当前坐标和目标坐标的差，移动差值/step，更新用户坐标值，step-1
  *                如果为，表明还有一步就到达目标点，直接将坐标值更改为目标坐标，将栈顶元素出栈
@@ -72,12 +72,15 @@ int User::move()
         coordX += (Loc[abs(temp.first)][0] - coordX) / temp.second;
         coordY += (Loc[abs(temp.first)][1] - coordY) / temp.second;
         temp.second--;
+        return 1;
     }
     else
     {
         coordX = Loc[abs(temp.first)][0];
         coordY = Loc[abs(temp.first)][1];
+        int ret = 2 + myPath.top().first;
         myPath.pop();
+        return ret;
     }
     return 1;
 }
@@ -88,6 +91,33 @@ int User::move()
 */
 std::vector<std::pair<int, int>> User::getSpot()
 {
+    std::vector<std::pair<int, int>> res;
+    if (!myPath.empty())
+    {
+        int cur = abs(myPath.top().first);
+        for (int i = 0; i < Distance[cur].size(); i++)
+        {
+            int dis = 0;
+            if (Distance[cur][i].second < 10)
+            {
+                int mid = Distance[cur][i].first;
+                dis += Distance[cur][i].second;
+                res.push_back(std::pair<int, int>(mid, dis));
+                for (int j = 0; j < Distance[mid].size(); j++)
+                {
+                    if (Distance[mid][j].second < 10 && Distance[mid][j].first != cur)
+                    {
+                        int end = Distance[mid][j].first;
+                        dis += Distance[mid][j].second;
+                        res.push_back(std::pair<int, int>(end, dis));
+                        dis -= Distance[mid][j].second;
+                    }
+                }
+                dis -= Distance[cur][i].second;
+            }
+        }
+    }
+    return res;
 }
 
 /*
@@ -96,7 +126,7 @@ std::vector<std::pair<int, int>> User::getSpot()
 */
 int User::getDes()
 {
-    if(myPath.empty())
+    if (myPath.empty())
         return -1;
     return myPath.top().first;
 }
