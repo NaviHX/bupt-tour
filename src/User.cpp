@@ -78,7 +78,7 @@ int User::move()
     {
         coordX = Loc[abs(temp.first)][0];
         coordY = Loc[abs(temp.first)][1];
-        int ret=2+myPath.top().first;
+        int ret = 2 + myPath.top().first;
         myPath.pop();
         return ret;
     }
@@ -91,6 +91,33 @@ int User::move()
 */
 std::vector<std::pair<int, int>> User::getSpot()
 {
+    std::vector<std::pair<int, int>> res;
+    if (!myPath.empty())
+    {
+        int cur = abs(myPath.top().first);
+        for (int i = 0; i < Distance[cur].size(); i++)
+        {
+            int dis = 0;
+            if (Distance[cur][i].second < 10)
+            {
+                int mid = Distance[cur][i].first;
+                dis += Distance[cur][i].second;
+                res.push_back(std::pair<int, int>(mid, dis));
+                for (int j = 0; j < Distance[mid].size(); j++)
+                {
+                    if (Distance[mid][j].second < 10 && Distance[mid][j].first != cur)
+                    {
+                        int end = Distance[mid][j].first;
+                        dis += Distance[mid][j].second;
+                        res.push_back(std::pair<int, int>(end, dis));
+                        dis -= Distance[mid][j].second;
+                    }
+                }
+                dis -= Distance[cur][i].second;
+            }
+        }
+    }
+    return res;
 }
 
 /*
@@ -99,7 +126,7 @@ std::vector<std::pair<int, int>> User::getSpot()
 */
 int User::getDes()
 {
-    if(myPath.empty())
+    if (myPath.empty())
         return -1;
     return myPath.top().first;
 }

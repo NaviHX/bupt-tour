@@ -19,14 +19,14 @@
 #include "global.h"
 #include "MapCanvas.h"
 
-#include <iostream>
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     // 初始化菜单栏
     QMenu *userMenu = menuBar()->addMenu(tr("&User"));
     addOneUser = new QAction(tr("&add one user"), this);
+    findNearby = new QAction(tr("&Find nearby locations"),this);
     userMenu->addAction(addOneUser);
+    userMenu->addAction(findNearby);
 
     QMenu *timerMenu = menuBar()->addMenu(tr("&Timer"));
     start = new QAction(tr("&Start"), this);
@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(start, SIGNAL(triggered()), this, SLOT(startTimer()));
     connect(pause, SIGNAL(triggered()), this, SLOT(pauseTimer()));
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
+    connect(findNearby,SIGNAL(triggered()),this,SLOT(findNearbyLoc()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -185,7 +186,7 @@ bool MainWindow::isTimerStart()
 
 void MainWindow::printOnCons(const QString &str)
 {
-    if(console->document()->lineCount()>100)
+    if (console->document()->lineCount() > 100)
     {
         console->clear();
     }
@@ -207,4 +208,31 @@ std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)
         st.pop();
     }
     return res;
+}
+
+void MainWindow::findNearbyLoc()
+{
+    this->pauseTimer();
+    bool ok = false;
+    for (int i = 0; i < myUsers.size(); i++)
+    {
+        if (myUsers[i] != nullptr)
+        {
+            ok = true;
+            auto v = myUsers[i]->getSpot();
+            this->printOnCons(tr("User %1 nearby locations :").arg(QString::number(i)));
+            for (int j = 0; j < v.size(); j++)
+            {
+                int l = v[j].first, w = v[j].second;
+                this->printOnCons(tr("%1 : %2 meters")
+                                      .arg(
+                                          QString::fromStdString(Building[l]),
+                                          QString::number(w*10)));
+            }
+        }
+    }
+    if(!ok)
+    {
+        this->printOnCons(tr("No User added"));
+    }
 }

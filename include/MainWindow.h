@@ -32,6 +32,7 @@ public slots:
     void startTimer();
     void pauseTimer();
     void showHelp();
+    void findNearbyLoc();
 
 public:
     MainWindow(QWidget *parent);
@@ -48,6 +49,9 @@ private:
     QAction *start;
     QAction *pause;
     QAction *help;
+
+    QAction *findNearby;
+    QAction *changeDes;
 
     QStringList plotList;
 
