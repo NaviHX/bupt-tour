@@ -242,6 +242,7 @@ void MainWindow::findNearbyLoc()
 
 void MainWindow::changeDes()
 {
+    this->pauseTimer();
     bool ok = false;
     QStringList uList;
     for (int i = 0; i < myUsers.size(); i++)
