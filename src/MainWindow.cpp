@@ -154,7 +154,9 @@ void MainWindow::addUser()
     if (!ok)
     {
         QMessageBox::information(NULL, tr("Warning"), tr("Cannot add user : no mem"), QMessageBox::Yes, QMessageBox::Yes);
+        return;
     }
+    canvas->repaint();
 }
 
 void MainWindow::refresh()
