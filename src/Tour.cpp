@@ -131,6 +131,7 @@ std::stack<std::pair<int, int>> Tour::getShortPath(int s, int e)
     {
         dis[i] = INFL;
     }
+    pre[s] = s;
     dis[s] = 0;
     q.push(s);
     while (!q.empty())
@@ -185,6 +186,7 @@ std::stack<std::pair<int, int>> Tour::getCongestionPath(int s, int e)
     {
         dis[i] = INF;
     }
+    pre[s] = s;
     dis[s] = 0;
     q.push(s);
     while (!q.empty())
@@ -239,6 +241,7 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
     {
         dis[i] = INF;
     }
+    pre[s] = s;
     dis[s] = 0;
     q.push(s);
     while (!q.empty())

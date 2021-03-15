@@ -203,6 +203,11 @@ void MainWindow::printOnCons(const QString &str)
 std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)
 {
     std::string *res = new std::string;
+    if(st.empty())
+    {
+        // 防止非法访问内存
+        return res;
+    }
     (*res) += Building[abs(st.top().first)];
     st.pop();
     while (!st.empty())
