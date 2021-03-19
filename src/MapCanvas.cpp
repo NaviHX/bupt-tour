@@ -36,8 +36,10 @@ void MapCanvas::paintEvent(QPaintEvent *event)
         {
             int x = list[i]->getX();
             int y = list[i]->getY();
-            painter.drawLine(x - 5, y, x + 5, y);
-            painter.drawLine(x, y - 5, x, y + 5);
+            // painter.drawLine(x - 5, y, x + 5, y);
+            // painter.drawLine(x, y - 5, x, y + 5);
+            painter.fillRect(x-10,y-3,20,6,colorList[i]);
+            painter.fillRect(x-3,y-10,6,20,colorList[i]);
         }
     }
 }

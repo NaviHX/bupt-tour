@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(pause, SIGNAL(triggered()), this, SLOT(pauseTimer()));
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
     connect(findNearby, SIGNAL(triggered()), this, SLOT(findNearbyLoc()));
-    connect(chDes,SIGNAL(triggered()),this,SLOT(changeDes()));
+    connect(chDes, SIGNAL(triggered()), this, SLOT(changeDes()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -140,7 +140,7 @@ void MainWindow::addUser()
     ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
-        if (myUsers[i] == nullptr)
+        if (myUsers[i] == nullptr) // 寻找空闲用户指针
         {
             myUsers[i] = new User(st);
             this->printOnCons(tr("User %1 add").arg(QString::number(i)));
@@ -154,7 +154,9 @@ void MainWindow::addUser()
     if (!ok)
     {
         QMessageBox::information(NULL, tr("Warning"), tr("Cannot add user : no mem"), QMessageBox::Yes, QMessageBox::Yes);
+        return;
     }
+    canvas->repaint();
 }
 
 void MainWindow::refresh()
@@ -203,6 +205,11 @@ void MainWindow::printOnCons(const QString &str)
 std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)
 {
     std::string *res = new std::string;
+    if (st.empty())
+    {
+        // 防止非法访问内存
+        return res;
+    }
     (*res) += Building[abs(st.top().first)];
     st.pop();
     while (!st.empty())
@@ -219,7 +226,7 @@ void MainWindow::findNearbyLoc()
     bool ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
-        if (myUsers[i] != nullptr)
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
         {
             ok = true;
             auto v = myUsers[i]->getSpot();
@@ -242,11 +249,17 @@ void MainWindow::findNearbyLoc()
 
 void MainWindow::changeDes()
 {
+    this->pauseTimer();
     bool ok = false;
     QStringList uList;
     for (int i = 0; i < myUsers.size(); i++)
     {
-        if (myUsers[i] != nullptr)
+        /* 
+            不能简单地判断指针是否为空
+            合法的可以修改目标的用户，路径栈不能为空
+            指针判空仅确保实例未释放
+         */
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
         {
             ok = true;
             uList << QString::number(i);
