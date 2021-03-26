@@ -16,6 +16,8 @@
 #include <utility>
 #include <stack>
 
+#define INVALID 0x80000000
+
 class User
 {
 public:

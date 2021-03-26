@@ -139,7 +139,7 @@ std::vector<std::pair<int, int>> User::getSpot()
 int User::getDes()
 {
     if (myPath.empty())
-        return -1;
+        return INVALID;
     return myPath.top().first;
 }
 
@@ -150,6 +150,6 @@ int User::getDes()
 int User::getInterv()
 {
     if (myPath.empty())
-        return -1;
+        return INVALID;
     return myPath.top().second;
 }

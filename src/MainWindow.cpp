@@ -241,7 +241,7 @@ void MainWindow::findNearbyLoc()
     bool ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
-        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != INVALID)
         {
             ok = true;
             auto v = myUsers[i]->getSpot();
@@ -274,7 +274,7 @@ void MainWindow::changeDes()
             合法的可以修改目标的用户，路径栈不能为空
             指针判空仅确保实例未释放
          */
-        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != INVALID)
         {
             ok = true;
             uList << QString::number(i);
