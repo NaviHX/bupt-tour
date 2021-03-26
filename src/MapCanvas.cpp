@@ -28,7 +28,7 @@ void MapCanvas::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QColor colorList[3] = {Qt::red, Qt::blue, Qt::green};
     QPainter painter(this);
-    painter.drawImage(QRect(0, 0, 960, 540), mapImg);
+    painter.drawImage(QRect(0, 0, 960, 434), mapImg);
     for (int i = 0; i < list.size(); i++)
     {
         painter.setPen(colorList[i]);

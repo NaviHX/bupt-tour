@@ -18,6 +18,7 @@
 
 #include "global.h"
 #include "MapCanvas.h"
+#include "settingWnd.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -36,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     timerMenu->addAction(start);
     timerMenu->addAction(pause);
 
+    setting = menuBar()->addAction(tr("&Setting"));
+
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     help = new QAction(tr("&Help"), this);
     helpMenu->addAction(help);
@@ -43,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // 初始化计时器
     timer = new QTimer(this);
     timerStatus = false;
+    timerCount = 0;
 
     //  初始化其他成员和全局变量
     myTour = new Tour();
@@ -82,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
     connect(findNearby, SIGNAL(triggered()), this, SLOT(findNearbyLoc()));
     connect(chDes, SIGNAL(triggered()), this, SLOT(changeDes()));
+    connect(setting,SIGNAL(triggered()),this,SLOT(showSetting()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -121,7 +126,8 @@ void MainWindow::addUser()
     QString text = QInputDialog::getItem(this, tr("Add User"), tr("Select where to start"), plotList, 0, false, &ok);
     if (!ok)
         return;
-    plots.push_back(Id[text.toStdString()]);
+    // plots.push_back(Id[text.toStdString()]);
+    plots.push_back(Tour::getId(text.toStdString()));
     while (true)
     {
         bool ok1 = false, ok2 = false;
@@ -133,7 +139,8 @@ void MainWindow::addUser()
             break;
         QByteArray ba = t.toLatin1();
         char *ch = ba.data();
-        plots.push_back(Id[p.toStdString()]);
+        // plots.push_back(Id[p.toStdString()]);
+        plots.push_back(Tour::getId(p.toStdString()));
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
@@ -181,6 +188,7 @@ void MainWindow::refresh()
             }
         }
     }
+    timerCount++;
     canvas->repaint();
 }
 
@@ -200,6 +208,13 @@ void MainWindow::printOnCons(const QString &str)
     cursor.movePosition(QTextCursor::End);
     console->setTextCursor(cursor);
     console->insertPlainText(str + '\n');
+
+#ifdef DEBUG
+
+    debugStream << "[" << timerCount << "]"
+                << " : " << str << std::endl;
+
+#endif
 }
 
 std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)
@@ -297,7 +312,8 @@ void MainWindow::changeDes()
             break;
         QByteArray ba = t.toLatin1();
         char *ch = ba.data();
-        plots.push_back(Id[p.toStdString()]);
+        // plots.push_back(Id[p.toStdString()]);
+        plots.push_back(Tour::getId(p.toStdString()));
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
@@ -306,4 +322,11 @@ void MainWindow::changeDes()
     std::string *pathStr = getPathStr(st);
     this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
     delete pathStr;
+}
+
+void MainWindow::showSetting()
+{
+    pauseTimer();
+    settingWnd* s=new settingWnd;
+    s->show();
 }
