@@ -27,10 +27,13 @@ std::vector<std::vector<std::pair<int, long long>>> DistanceBike;
 std::vector<std::vector<bool>> VisualBike;
 std::vector<std::vector<std::pair<int, int>>> Direction;
 std::vector<std::vector<std::pair<int, std::string>>> Hint;
+std::map<std::string, std::vector<std::pair<int, int>>> Load;
 int Speed;
 int RideSpeed;
 int TimeInterval;
 int BuildingCnt;
+int CnameCnt;
+int LoadBla;
 
 #ifdef DEBUG
 
@@ -64,6 +67,8 @@ Tour::Tour()
         configFile >> BuildingCnt >> roadCnt >> cycRoadCnt;
         configFile >> Speed >> RideSpeed;
         configFile >> TimeInterval;
+        configFile >> LoadBla;
+        configFile >> CnameCnt;
 
         // 初始化地点信息 前三项
         for (int i = 0; i < BuildingCnt; i++)
@@ -106,6 +111,31 @@ Tour::Tour()
             DistanceBike[to].push_back(std::pair<int, long long>(from, static_cast<long long>(weight)));
             VisualBike[to].push_back(vis);
         }
+        for (int i = 0; i < LoadBla; i++)
+        {
+            std::vector<std::pair<int, int>> v;
+            std::string tempStr;
+            int cnt;
+            configFile >> tempStr >> cnt;
+            for (int j = 0; j < cnt; j++)
+            {
+                int id, c;
+                configFile >> id >> c;
+                v.push_back(std::pair<int, int>(id, c));
+            }
+            Load.insert(std::pair<std::string, std::vector<std::pair<int, int>>>(tempStr, v));
+            Building.push_back(tempStr);
+        }
+        BuildingCnt += LoadBla;
+        for (int i = 0; i < CnameCnt; i++)
+        {
+            int temp;
+            std::string tempStr;
+            configFile >> temp >> tempStr;
+            Id.insert(std::pair<std::string, int>(tempStr, temp));
+            Building.push_back(tempStr);
+        }
+        BuildingCnt += CnameCnt;
     }
     catch (...)
     {
@@ -340,4 +370,25 @@ std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std:
         }
     }
     return res;
+}
+
+int Tour::getId(std::string name)
+{
+    std::map<std::string, std::vector<std::pair<int, int>>>::iterator l_it;
+    l_it=Load.find(name);
+    if(l_it!=Load.end())
+    {
+        auto v = l_it->second;
+        int minNum=v[0].first,minLoad=v[0].second;
+        for(unsigned int i=1;i<v.size();i++)
+        {
+            if(minLoad>v[i].second)
+            {
+                minNum=v[i].first;
+                minLoad=v[i].second;
+            }
+        }
+        return minNum;
+    }
+    return Id[name];
 }

@@ -23,10 +23,14 @@ extern std::vector<std::vector<std::pair<int, int>>> Congestion;
 extern std::vector<std::vector<std::pair<int, long long>>> DistanceBike;
 extern std::vector<std::vector<std::pair<int, int>>> Direction;
 extern std::vector<std::vector<std::pair<int, std::string>>> Hint;
+
 extern int Speed;
 extern int RideSpeed;
 extern int TimeInterval;
 extern int BuildingCnt;
+extern int LoadBal;
+extern int CnameCnt;
+
 
 #ifdef DEBUG
 

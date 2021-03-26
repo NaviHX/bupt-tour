@@ -12,6 +12,7 @@
 #include <stack>
 #include <utility>
 #include <vector>
+#include <string>
 
 class Tour
 {
@@ -21,6 +22,7 @@ public:
     std::stack<std::pair<int, int>> getCongestionPath(int s, int e);
     std::stack<std::pair<int, int>> getBikePath(int s, int e);
     std::stack<std::pair<int, int>> getSerialPath(std::vector<int> plots, std::vector<int> tactics);
+    static int getId(std::string name);
 
     Tour();
     ~Tour();

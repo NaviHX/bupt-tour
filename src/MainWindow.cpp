@@ -122,7 +122,8 @@ void MainWindow::addUser()
     QString text = QInputDialog::getItem(this, tr("Add User"), tr("Select where to start"), plotList, 0, false, &ok);
     if (!ok)
         return;
-    plots.push_back(Id[text.toStdString()]);
+    // plots.push_back(Id[text.toStdString()]);
+    plots.push_back(Tour::getId(text.toStdString()));
     while (true)
     {
         bool ok1 = false, ok2 = false;
@@ -134,7 +135,8 @@ void MainWindow::addUser()
             break;
         QByteArray ba = t.toLatin1();
         char *ch = ba.data();
-        plots.push_back(Id[p.toStdString()]);
+        // plots.push_back(Id[p.toStdString()]);
+        plots.push_back(Tour::getId(p.toStdString()));
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
@@ -306,7 +308,8 @@ void MainWindow::changeDes()
             break;
         QByteArray ba = t.toLatin1();
         char *ch = ba.data();
-        plots.push_back(Id[p.toStdString()]);
+        // plots.push_back(Id[p.toStdString()]);
+        plots.push_back(Tour::getId(p.toStdString()));
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
