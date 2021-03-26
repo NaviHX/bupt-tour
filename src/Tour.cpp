@@ -32,6 +32,12 @@ int RideSpeed;
 int TimeInterval;
 int BuildingCnt;
 
+#ifdef DEBUG
+
+std::ofstream debugStream;
+
+#endif
+
 // 最短路算法所需
 static int pre[1001];
 static long long dis[1001];
@@ -46,6 +52,11 @@ Tour::Tour()
     std::ifstream configFile;
     try
     {
+#ifdef DEBUG
+
+        debugStream.open("log.out", std::ios::out);
+
+#endif
         configFile.open("config", std::ios::in);
         int roadCnt, cycRoadCnt;
 
@@ -81,7 +92,7 @@ Tour::Tour()
             Distance[from].push_back(std::pair<int, long long>(to, weight));
             Visual[from].push_back(vis);
             Congestion[from].push_back(std::pair<int, int>(to, con));
-            Distance[to].push_back(std::pair<int, long long>(from,weight));
+            Distance[to].push_back(std::pair<int, long long>(from, weight));
             Visual[to].push_back(vis);
             Congestion[to].push_back(std::pair<int, int>(from, con));
         }
@@ -286,7 +297,7 @@ std::stack<std::pair<int, int>> getBikePath(int s, int e)
 */
 std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std::vector<int> tactics)
 {
-    if(plots.size()<=1)
+    if (plots.size() <= 1)
     {
         std::stack<std::pair<int, int>> emptyStack;
         return emptyStack;

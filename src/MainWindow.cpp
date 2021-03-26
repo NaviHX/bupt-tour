@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // 初始化计时器
     timer = new QTimer(this);
     timerStatus = false;
+    timerCount = 0;
 
     //  初始化其他成员和全局变量
     myTour = new Tour();
@@ -181,6 +182,7 @@ void MainWindow::refresh()
             }
         }
     }
+    timerCount++;
     canvas->repaint();
 }
 
@@ -200,6 +202,13 @@ void MainWindow::printOnCons(const QString &str)
     cursor.movePosition(QTextCursor::End);
     console->setTextCursor(cursor);
     console->insertPlainText(str + '\n');
+
+#ifdef DEBUG
+
+    debugStream << "[" << timerCount << "]"
+                << " : " << str << std::endl;
+
+#endif
 }
 
 std::string *MainWindow::getPathStr(std::stack<std::pair<int, int>> &st)

@@ -61,6 +61,7 @@ private:
 
     QTimer *timer;
     bool timerStatus;
+    long long timerCount;
 
     Tour *myTour;
 };

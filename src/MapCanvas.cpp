@@ -15,7 +15,7 @@
 MapCanvas::MapCanvas(QWidget *parent, std::vector<User *> &userList) : QWidget(parent),
                                                                        list(userList)
 {
-    this->resize(QSize(960, 540));
+    this->resize(QSize(960, 434));
     mapImg.load("./img/bupt-map.png");
 }
 

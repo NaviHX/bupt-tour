@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <iostream>
 
 extern std::vector<std::string> Building;
 extern std::map<std::string, int> Id;
@@ -27,4 +28,9 @@ extern int RideSpeed;
 extern int TimeInterval;
 extern int BuildingCnt;
 
+#ifdef DEBUG
+
+extern std::ofstream debugStream;
+
+#endif
 #endif
