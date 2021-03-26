@@ -34,6 +34,7 @@ public slots:
     void showHelp();
     void findNearbyLoc();
     void changeDes();
+    void showSetting();
 
 public:
     MainWindow(QWidget *parent);
@@ -62,6 +63,8 @@ private:
     QTimer *timer;
     bool timerStatus;
     long long timerCount;
+
+    QAction *setting;
 
     Tour *myTour;
 };

@@ -18,6 +18,7 @@
 
 #include "global.h"
 #include "MapCanvas.h"
+#include "settingWnd.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     pause = new QAction(tr("&Pause"), this);
     timerMenu->addAction(start);
     timerMenu->addAction(pause);
+
+    setting = menuBar()->addAction(tr("&Setting"));
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     help = new QAction(tr("&Help"), this);
@@ -83,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
     connect(findNearby, SIGNAL(triggered()), this, SLOT(findNearbyLoc()));
     connect(chDes, SIGNAL(triggered()), this, SLOT(changeDes()));
+    connect(setting,SIGNAL(triggered()),this,SLOT(showSetting()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -318,4 +322,11 @@ void MainWindow::changeDes()
     std::string *pathStr = getPathStr(st);
     this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
     delete pathStr;
+}
+
+void MainWindow::showSetting()
+{
+    pauseTimer();
+    settingWnd* s=new settingWnd;
+    s->show();
 }
