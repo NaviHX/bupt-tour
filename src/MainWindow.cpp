@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(help, SIGNAL(triggered()), this, SLOT(showHelp()));
     connect(findNearby, SIGNAL(triggered()), this, SLOT(findNearbyLoc()));
     connect(chDes, SIGNAL(triggered()), this, SLOT(changeDes()));
-    connect(setting,SIGNAL(triggered()),this,SLOT(showSetting()));
+    connect(setting, SIGNAL(triggered()), this, SLOT(showSetting()));
 
     this->printOnCons(tr("Copyright © 2021 BUPT-Tour. All rights reserved."));
 }
@@ -241,18 +241,25 @@ void MainWindow::findNearbyLoc()
     bool ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
-        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != INVALID)
         {
             ok = true;
-            auto v = myUsers[i]->getSpot();
-            this->printOnCons(tr("User %1 nearby locations :").arg(QString::number(i)));
-            for (int j = 0; j < v.size(); j++)
+            if (myUsers[i]->getDes() >= 0)
             {
-                int l = v[j].first, w = v[j].second;
-                this->printOnCons(tr("%1 : %2 meters")
-                                      .arg(
-                                          QString::fromStdString(Building[l]),
-                                          QString::number(w * 10)));
+                auto v = myUsers[i]->getSpot();
+                this->printOnCons(tr("User %1 nearby locations :").arg(QString::number(i)));
+                for (int j = 0; j < v.size(); j++)
+                {
+                    int l = v[j].first, w = v[j].second;
+                    this->printOnCons(tr("%1 : %2 meters")
+                                          .arg(
+                                              QString::fromStdString(Building[l]),
+                                              QString::number(w * 10)));
+                }
+            }
+            else
+            {
+                this->printOnCons(tr("User %1 is out of the campus").arg(QString::number(i)));
             }
         }
     }
@@ -274,7 +281,7 @@ void MainWindow::changeDes()
             合法的可以修改目标的用户，路径栈不能为空
             指针判空仅确保实例未释放
          */
-        if (myUsers[i] != nullptr && myUsers[i]->getDes() != -1)
+        if (myUsers[i] != nullptr && myUsers[i]->getDes() != INVALID)
         {
             ok = true;
             uList << QString::number(i);
@@ -327,6 +334,6 @@ void MainWindow::changeDes()
 void MainWindow::showSetting()
 {
     pauseTimer();
-    settingWnd* s=new settingWnd;
+    settingWnd *s = new settingWnd;
     s->show();
 }
