@@ -113,7 +113,7 @@ void MainWindow::pauseTimer()
 
 void MainWindow::showHelp()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/NaviHX/bupt-tour/blob/master/doc/developer.md"));
+    QDesktopServices::openUrl(QUrl("https://github.com/NaviHX/bupt-tour/blob/master/doc/instruction.md"));
 }
 
 void MainWindow::addUser()
