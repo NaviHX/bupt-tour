@@ -13,6 +13,8 @@ Copyright © 2021 BUPT-Tour. All rights reserved.
 ### 使用
 
 打开软件，可以看见地图栏（用于展示校区地图），控制台栏（展示软件运行信息），工具栏（提供选项） 
+![image](https://user-images.githubusercontent.com/63288135/113399752-4fbb7580-93d3-11eb-8e75-3b3caddf5842.png)
+
 工具栏从左向右依次是：  
 |选项|作用|
 |-|-|
@@ -45,7 +47,8 @@ Copyright © 2021 BUPT-Tour. All rights reserved.
 
 ### 设置
 
-软件向用户提供了设置界面，可以对软件运行的参数进行修改
+软件向用户提供了设置界面，可以对软件运行的参数进行修改  
+![image](https://user-images.githubusercontent.com/63288135/113399812-6b268080-93d3-11eb-93b7-05a93cad6630.png)
 
 #### 修改刷新时间
 
