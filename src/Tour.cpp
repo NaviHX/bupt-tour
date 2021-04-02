@@ -336,7 +336,7 @@ std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std:
     for (int i = tactics.size() - 1; i >= 0; i--)
     {
         int t = tactics[i];
-        int s = plots[i], e = plots[i + 1];
+        int s = abs(plots[i]), e = abs(plots[i + 1]);
         switch (t)
         {
         case 0:

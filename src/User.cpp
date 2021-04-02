@@ -22,23 +22,23 @@ User::User(std::stack<std::pair<int, int>> &path)
         myPath = path;
         coordX = Loc[path.top().first][0];
         coordY = Loc[path.top().first][1];
-        start=abs(path.top().first);
-        turns=0;
+        start = abs(path.top().first);
+        turns = 0;
         myPath.pop();
     }
 }
 
-User::User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv,int start,int turns)
+User::User(std::stack<std::pair<int, int>> &path, int x, int y, int des, int interv, int start, int turns)
 {
     if (!path.empty())
     {
         myPath = path;
         coordX = x;
         coordY = y;
-        this->start=start;
-        this->turns=turns;
+        this->start = start;
+        this->turns = turns;
         myPath.pop();
-        myPath.push(std::pair<int,int>(des,interv));
+        myPath.push(std::pair<int, int>(des, interv));
     }
 }
 
@@ -96,8 +96,8 @@ int User::move()
         coordX = Loc[abs(temp.first)][0];
         coordY = Loc[abs(temp.first)][1];
         int ret = 2 + myPath.top().first;
-        turns=0;
-        start=abs(myPath.top().first);
+        turns = 0;
+        start = abs(myPath.top().first);
         myPath.pop();
         return ret;
     }
@@ -145,9 +145,16 @@ std::vector<std::pair<int, int>> User::getSpot()
 */
 int User::getDes()
 {
-    if (myPath.empty())
+    try
+    {
+        if (myPath.empty())
+            return INVALID;
+        return myPath.top().first;
+    }
+    catch (...)
+    {
         return INVALID;
-    return myPath.top().first;
+    }
 }
 
 /*
