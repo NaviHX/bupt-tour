@@ -302,7 +302,10 @@ void MainWindow::changeDes()
     int interv = myUsers[u]->getInterv();
     int curX = myUsers[u]->getX();
     int curY = myUsers[u]->getY();
+    int startPoint = myUsers[u]->getStart();
+    int turns = myUsers[u]->getTurns();
     delete myUsers[u];
+    myUsers[u] = nullptr;
 
     QStringList tacList;
     tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
@@ -324,7 +327,23 @@ void MainWindow::changeDes()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
-    myUsers[u] = new User(st, curX, curY, curDes, interv);
+    auto pairtemp=st.top();
+    st.pop();
+    if(st.top().first==startPoint)
+    {
+        int temp=curDes;
+        curDes=startPoint;
+        startPoint=temp;
+
+        temp=turns;
+        turns=interv;
+        interv=temp;
+    }
+    else
+    {
+        st.push(pairtemp);
+    }
+    myUsers[u] = new User(st, curX, curY, curDes, interv,startPoint,turns);
 
     std::string *pathStr = getPathStr(st);
     this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
