@@ -305,6 +305,7 @@ void MainWindow::changeDes()
     int startPoint = myUsers[u]->getStart();
     int turns = myUsers[u]->getTurns();
     delete myUsers[u];
+    myUsers[u] = nullptr;
 
     QStringList tacList;
     tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
