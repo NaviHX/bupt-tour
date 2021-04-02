@@ -22,17 +22,21 @@ User::User(std::stack<std::pair<int, int>> &path)
         myPath = path;
         coordX = Loc[path.top().first][0];
         coordY = Loc[path.top().first][1];
+        start=abs(path.top().first);
+        turns=0;
         myPath.pop();
     }
 }
 
-User::User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv)
+User::User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv,int start,int turns)
 {
     if (!path.empty())
     {
         myPath = path;
         coordX = x;
         coordY = y;
+        this->start=start;
+        this->turns=turns;
         myPath.pop();
         myPath.push(std::pair<int,int>(des,interv));
     }
@@ -84,6 +88,7 @@ int User::move()
         coordX += (Loc[abs(temp.first)][0] - coordX) / temp.second;
         coordY += (Loc[abs(temp.first)][1] - coordY) / temp.second;
         temp.second--;
+        turns++;
         return 1;
     }
     else
@@ -91,6 +96,8 @@ int User::move()
         coordX = Loc[abs(temp.first)][0];
         coordY = Loc[abs(temp.first)][1];
         int ret = 2 + myPath.top().first;
+        turns=0;
+        start=abs(myPath.top().first);
         myPath.pop();
         return ret;
     }
@@ -152,4 +159,22 @@ int User::getInterv()
     if (myPath.empty())
         return INVALID;
     return myPath.top().second;
+}
+
+/*
+ * @function    : getStart
+ * @description : 
+*/
+int User::getStart()
+{
+    return start;
+}
+
+/*
+ * @function    : getTurns
+ * @description : 
+*/
+int User::getTurns()
+{
+    return turns;
 }

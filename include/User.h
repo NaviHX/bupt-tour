@@ -25,16 +25,20 @@ public:
     int getY();
     int getDes();
     int getInterv();
+    int getStart();
+    int getTurns();
     int move();
     std::vector<std::pair<int, int>> getSpot();
 
     User(std::stack<std::pair<int, int>>& path);
-    User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv);
+    User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv,int start,int turns);
     ~User();
 
 private:
     int coordX;
     int coordY;
+    int start;
+    int turns;
     std::stack<std::pair<int, int>> myPath;
 };
 
