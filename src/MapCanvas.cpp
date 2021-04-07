@@ -7,6 +7,7 @@
 */
 
 #include "MapCanvas.h"
+#include "global.h"
 
 /*
  * @function    : MapCanvas
