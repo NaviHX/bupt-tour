@@ -42,6 +42,19 @@ void MapCanvas::paintEvent(QPaintEvent *event)
                 // painter.drawLine(x, y - 5, x, y + 5);
                 painter.fillRect(x - 10, y - 3, 20, 6, colorList[i]);
                 painter.fillRect(x - 3, y - 10, 6, 20, colorList[i]);
+                auto path = list[i]->getPath();
+                while (!path.empty())
+                {
+                    int next_x = Loc[abs(path.top().first)][0];
+                    int next_y = Loc[abs(path.top().first)][1];
+                    if (path.top().first >= 0)
+                    {
+                        painter.drawLine(x, y, next_x, next_y);
+                    }
+                    x = next_x;
+                    y = next_y;
+                    path.pop();
+                }
             }
         }
         catch (...)
