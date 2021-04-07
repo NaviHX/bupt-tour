@@ -29,6 +29,7 @@ public:
     int getTurns();
     int move();
     std::vector<std::pair<int, int>> getSpot();
+    std::stack<std::pair<int,int>> getPath();
 
     User(std::stack<std::pair<int, int>>& path);
     User(std::stack<std::pair<int, int>> &path,int x,int y,int des,int interv,int start,int turns);
