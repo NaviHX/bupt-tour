@@ -32,7 +32,7 @@ void MapCanvas::paintEvent(QPaintEvent *event)
     painter.drawImage(QRect(0, 0, 960, 434), mapImg);
     for (int i = 0; i < list.size(); i++)
     {
-        painter.setPen(colorList[i]);
+        painter.setPen(QPen(colorList[i], 3));
         try
         {
             if (list[i] != nullptr && list[i]->getDes() >= 0)
