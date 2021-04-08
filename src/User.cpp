@@ -185,3 +185,8 @@ int User::getTurns()
 {
     return turns;
 }
+
+std::stack<std::pair<int,int>> User::getPath()
+{
+     return myPath;
+}
