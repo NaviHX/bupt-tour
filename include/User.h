@@ -40,6 +40,8 @@ private:
     int coordY;
     int start;
     int turns;
+    int wait;
+    int busNum;
     std::stack<std::pair<int, int>> myPath;
 };
 
