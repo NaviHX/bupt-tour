@@ -14,6 +14,7 @@
 #include <string>
 #include <utility>
 #include <iostream>
+#include "Bus.h"
 
 extern std::vector<std::string> Building;
 extern std::map<std::string, int> Id;
@@ -24,13 +25,18 @@ extern std::vector<std::vector<std::pair<int, long long>>> DistanceBike;
 extern std::vector<std::vector<std::pair<int, int>>> Direction;
 extern std::vector<std::vector<std::pair<int, std::string>>> Hint;
 extern std::map<std::string, std::vector<std::pair<int, int>>> Load;
+extern std::vector<Bus *> BusArr;
 extern int Speed;
 extern int RideSpeed;
 extern int TimeInterval;
 extern int BuildingCnt;
 extern int LoadBal;
 extern int CnameCnt;
+extern int BusCount;
 
+extern int CurTime;
+
+#define MAX_TIME (24 * 60)
 
 #ifdef DEBUG
 
