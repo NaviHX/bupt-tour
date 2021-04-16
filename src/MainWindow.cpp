@@ -19,6 +19,7 @@
 #include "global.h"
 #include "MapCanvas.h"
 #include "settingWnd.h"
+#include "Bus.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -168,6 +169,9 @@ void MainWindow::addUser()
 
 void MainWindow::refresh()
 {
+    CurTime++;
+    if (CurTime >= MAX_TIME)
+        CurTime = 0;
     for (int i = 0; i < myUsers.size(); i++)
     {
         if (myUsers[i] != nullptr)
@@ -185,6 +189,12 @@ void MainWindow::refresh()
                 this->printOnCons(tr("User %1 arrive at %2")
                                       .arg(QString::number(i),
                                            QString::fromStdString(Building[plotId])));
+            }
+            else if (ret <= -2)
+            {
+                this->printOnCons(tr("User %1 get on bus %2")
+                                      .arg(QString::number(i),
+                                           QString::fromStdString(BusArr[abs(ret) - 2]->getName())));
             }
         }
     }
@@ -327,23 +337,23 @@ void MainWindow::changeDes()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
-    auto pairtemp=st.top();
+    auto pairtemp = st.top();
     st.pop();
-    if(st.top().first==startPoint)
+    if (st.top().first == startPoint)
     {
-        int temp=curDes;
-        curDes=startPoint;
-        startPoint=temp;
+        int temp = curDes;
+        curDes = startPoint;
+        startPoint = temp;
 
-        temp=turns;
-        turns=interv;
-        interv=temp;
+        temp = turns;
+        turns = interv;
+        interv = temp;
     }
     else
     {
         st.push(pairtemp);
     }
-    myUsers[u] = new User(st, curX, curY, curDes, interv,startPoint,turns);
+    myUsers[u] = new User(st, curX, curY, curDes, interv, startPoint, turns);
 
     std::string *pathStr = getPathStr(st);
     this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));
