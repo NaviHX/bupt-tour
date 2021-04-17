@@ -209,6 +209,7 @@ bool MainWindow::isTimerStart()
 
 void MainWindow::printOnCons(const QString &str)
 {
+    QString timeStamp = tr("[ %1 ] ").arg(QString::number(CurTime));
     if (console->document()->lineCount() > 100)
     {
         console->clear();
@@ -217,7 +218,7 @@ void MainWindow::printOnCons(const QString &str)
     QTextCursor cursor = console->textCursor();
     cursor.movePosition(QTextCursor::End);
     console->setTextCursor(cursor);
-    console->insertPlainText(str + '\n');
+    console->insertPlainText(timeStamp + str + '\n');
 
 #ifdef DEBUG
 
