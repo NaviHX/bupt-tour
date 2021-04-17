@@ -145,6 +145,11 @@ void MainWindow::addUser()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
+    if (st.empty())
+    {
+        printOnCons(tr("CANNOT ADD USER : NO PLOTS SELECTED"));
+        return;
+    }
     ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
@@ -315,8 +320,8 @@ void MainWindow::changeDes()
     int curY = myUsers[u]->getY();
     int startPoint = myUsers[u]->getStart();
     int turns = myUsers[u]->getTurns();
-    delete myUsers[u];
-    myUsers[u] = nullptr;
+    // delete myUsers[u];
+    // myUsers[u] = nullptr;
 
     QStringList tacList;
     tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
@@ -338,6 +343,14 @@ void MainWindow::changeDes()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
+
+    if (st.empty())
+    {
+        printOnCons(tr("CANNOT CHANGE : NO PLOTS SELECTED"));
+        return;
+    }
+    delete myUsers[u];
+    myUsers[u] = nullptr;
     auto pairtemp = st.top();
     st.pop();
     if (st.top().first == startPoint)
