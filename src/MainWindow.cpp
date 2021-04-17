@@ -19,6 +19,7 @@
 #include "global.h"
 #include "MapCanvas.h"
 #include "settingWnd.h"
+#include "Bus.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -144,6 +145,11 @@ void MainWindow::addUser()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
+    if (st.empty())
+    {
+        printOnCons(tr("CANNOT ADD USER : NO PLOTS SELECTED"));
+        return;
+    }
     ok = false;
     for (int i = 0; i < myUsers.size(); i++)
     {
@@ -168,6 +174,9 @@ void MainWindow::addUser()
 
 void MainWindow::refresh()
 {
+    CurTime++;
+    if (CurTime >= MAX_TIME)
+        CurTime = 0;
     for (int i = 0; i < myUsers.size(); i++)
     {
         if (myUsers[i] != nullptr)
@@ -186,6 +195,12 @@ void MainWindow::refresh()
                                       .arg(QString::number(i),
                                            QString::fromStdString(Building[plotId])));
             }
+            else if (ret <= -2)
+            {
+                this->printOnCons(tr("User %1 get on bus %2")
+                                      .arg(QString::number(i),
+                                           QString::fromStdString(BusArr[abs(ret) - 2]->getName())));
+            }
         }
     }
     timerCount++;
@@ -199,6 +214,7 @@ bool MainWindow::isTimerStart()
 
 void MainWindow::printOnCons(const QString &str)
 {
+    QString timeStamp = tr("[ %1 ] ").arg(QString::number(CurTime));
     if (console->document()->lineCount() > 100)
     {
         console->clear();
@@ -207,7 +223,7 @@ void MainWindow::printOnCons(const QString &str)
     QTextCursor cursor = console->textCursor();
     cursor.movePosition(QTextCursor::End);
     console->setTextCursor(cursor);
-    console->insertPlainText(str + '\n');
+    console->insertPlainText(timeStamp + str + '\n');
 
 #ifdef DEBUG
 
@@ -304,8 +320,8 @@ void MainWindow::changeDes()
     int curY = myUsers[u]->getY();
     int startPoint = myUsers[u]->getStart();
     int turns = myUsers[u]->getTurns();
-    delete myUsers[u];
-    myUsers[u] = nullptr;
+    // delete myUsers[u];
+    // myUsers[u] = nullptr;
 
     QStringList tacList;
     tacList << tr("1. shortest") << tr("2. congestion") << tr("3. Bike");
@@ -327,23 +343,31 @@ void MainWindow::changeDes()
         tact.push_back(ch[0] - '1');
     }
     std::stack<std::pair<int, int>> st = myTour->getSerialPath(plots, tact);
-    auto pairtemp=st.top();
-    st.pop();
-    if(st.top().first==startPoint)
-    {
-        int temp=curDes;
-        curDes=startPoint;
-        startPoint=temp;
 
-        temp=turns;
-        turns=interv;
-        interv=temp;
+    if (st.empty())
+    {
+        printOnCons(tr("CANNOT CHANGE : NO PLOTS SELECTED"));
+        return;
+    }
+    delete myUsers[u];
+    myUsers[u] = nullptr;
+    auto pairtemp = st.top();
+    st.pop();
+    if (st.top().first == startPoint)
+    {
+        int temp = curDes;
+        curDes = startPoint;
+        startPoint = temp;
+
+        temp = turns;
+        turns = interv;
+        interv = temp;
     }
     else
     {
         st.push(pairtemp);
     }
-    myUsers[u] = new User(st, curX, curY, curDes, interv,startPoint,turns);
+    myUsers[u] = new User(st, curX, curY, curDes, interv, startPoint, turns);
 
     std::string *pathStr = getPathStr(st);
     this->printOnCons(tr("Path : %1").arg(QString::fromStdString(*pathStr)));

@@ -24,6 +24,7 @@ User::User(std::stack<std::pair<int, int>> &path)
         coordY = Loc[path.top().first][1];
         start = abs(path.top().first);
         turns = 0;
+        wait=0;
         myPath.pop();
     }
 }
@@ -37,6 +38,7 @@ User::User(std::stack<std::pair<int, int>> &path, int x, int y, int des, int int
         coordY = y;
         this->start = start;
         this->turns = turns;
+        wait=0;
         myPath.pop();
         myPath.push(std::pair<int, int>(des, interv));
     }
@@ -76,6 +78,9 @@ int User::getY()
  *                计算当前坐标和目标坐标的差，移动差值/step，更新用户坐标值，step-1
  *                如果为，表明还有一步就到达目标点，直接将坐标值更改为目标坐标，将栈顶元素出栈
  *                所有计算类型始终为整型
+ *                # 引入公共交通后 #
+ *                会产生负数返回值
+ *                -1表示等待，-2及更小表示上车(车序号为返回值绝对值-2)
 */
 int User::move()
 {
@@ -83,7 +88,16 @@ int User::move()
         return 0;
 
     auto &temp = myPath.top();
-    if (temp.second > 1)
+    if (wait > 1)
+    {
+        wait--;
+    }
+    else if (wait == 1)
+    {
+        wait = 0;
+        return -(busNum + 2);
+    }
+    else if (temp.second > 1)
     {
         coordX += (Loc[abs(temp.first)][0] - coordX) / temp.second;
         coordY += (Loc[abs(temp.first)][1] - coordY) / temp.second;
@@ -95,10 +109,33 @@ int User::move()
     {
         coordX = Loc[abs(temp.first)][0];
         coordY = Loc[abs(temp.first)][1];
-        int ret = 2 + myPath.top().first;
+        int ret = 2 + abs(myPath.top().first);
         turns = 0;
         start = abs(myPath.top().first);
         myPath.pop();
+        if (!myPath.empty())
+        {
+            int to = abs(myPath.top().first);
+            int time = -1;
+            int num;
+            for (int i = 0; i < BusCount; i++)
+            {
+                if (BusArr[i]->check(start, to))
+                {
+                    int t = BusArr[i]->getNearestTime();
+                    if(time==-1 || t<time)
+                    {
+                        time=t;
+                        num=i;
+                    }
+                }
+            }
+            if(time!=-1)
+            {
+                wait=time;
+                busNum=num;
+            }
+        }
         return ret;
     }
     return 1;
@@ -186,7 +223,7 @@ int User::getTurns()
     return turns;
 }
 
-std::stack<std::pair<int,int>> User::getPath()
+std::stack<std::pair<int, int>> User::getPath()
 {
-     return myPath;
+    return myPath;
 }

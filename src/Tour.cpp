@@ -13,6 +13,7 @@
 #include <map>
 #include <queue>
 #include <cmath>
+#include "Bus.h"
 
 #define INFL 0x7fffffffffffffff
 #define INF 0x7fffffff
@@ -28,12 +29,15 @@ std::vector<std::vector<bool>> VisualBike;
 std::vector<std::vector<std::pair<int, int>>> Direction;
 std::vector<std::vector<std::pair<int, std::string>>> Hint;
 std::map<std::string, std::vector<std::pair<int, int>>> Load;
+std::vector<Bus *> BusArr;
 int Speed;
 int RideSpeed;
 int TimeInterval;
 int BuildingCnt;
 int CnameCnt;
 int LoadBla;
+int BusCount;
+int CurTime;
 
 #ifdef DEBUG
 
@@ -55,6 +59,9 @@ Tour::Tour()
     std::ifstream configFile;
     try
     {
+
+        CurTime = 0;
+
 #ifdef DEBUG
 
         debugStream.open("log.out", std::ios::out);
@@ -69,6 +76,7 @@ Tour::Tour()
         configFile >> TimeInterval;
         configFile >> LoadBla;
         configFile >> CnameCnt;
+        configFile >> BusCount;
 
         // 初始化地点信息 前三项
         for (int i = 0; i < BuildingCnt; i++)
@@ -136,6 +144,34 @@ Tour::Tour()
             Building.push_back(tempStr);
         }
         BuildingCnt += CnameCnt;
+
+        for (int i = 0; i < BusCount; i++)
+        {
+            std::string name, f, t;
+            int k;
+            configFile >> name >> k >> f >> t;
+            if(k==1)
+            {
+                std::vector<int> v;
+                int c;
+                configFile>>c;
+                for(int j=0;j<c;j++)
+                {
+                    int tempint;
+                    configFile>>tempint;
+                    v.push_back(tempint);
+                }
+                Bus* temp=new FixedBus(Id[f],Id[t],name,v);
+                BusArr.push_back(temp);
+            }
+            else if(k==2)
+            {
+                int tempint;
+                configFile>>tempint;
+                Bus* temp=new RepeatBus(Id[f],Id[t],name,tempint);
+                BusArr.push_back(temp);
+            }
+        }
     }
     catch (...)
     {
@@ -375,17 +411,17 @@ std::stack<std::pair<int, int>> Tour::getSerialPath(std::vector<int> plots, std:
 int Tour::getId(std::string name)
 {
     std::map<std::string, std::vector<std::pair<int, int>>>::iterator l_it;
-    l_it=Load.find(name);
-    if(l_it!=Load.end())
+    l_it = Load.find(name);
+    if (l_it != Load.end())
     {
         auto v = l_it->second;
-        int minNum=v[0].first,minLoad=v[0].second;
-        for(unsigned int i=1;i<v.size();i++)
+        int minNum = v[0].first, minLoad = v[0].second;
+        for (unsigned int i = 1; i < v.size(); i++)
         {
-            if(minLoad>v[i].second)
+            if (minLoad > v[i].second)
             {
-                minNum=v[i].first;
-                minLoad=v[i].second;
+                minNum = v[i].first;
+                minLoad = v[i].second;
             }
         }
         return minNum;
