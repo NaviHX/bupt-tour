@@ -138,6 +138,62 @@ a b d c v // 骑行道路 出发点 终点 距离(单位10米) 初始拥挤度 �
 |moveUser|`SLOT void`|移动用户位置|
 |deleteUser|`SLOT void`|删除用户|
 
+### settingWnd
+
+方法
+|Name|Type|Description|
+|-|-|-|
+|settingWnd|-|初始化布局|
+|setTimeInterval|void|设置时间间隔|
+|changeLoad|void|改变负载信息|
+|printLoad|void|输出负载信息|
+
+成员
+|Name|Type|Description|
+|-|-|-|
+|spinbox|QSpinBox *|时间间隔调节|
+|layout|QLayout *|布局|
+|changeButton|QPushButton *|刷新负载按键|
+|cons|QTextEdit *|负载输出文本框|
+|timeButton|QPushButton *|调节按键|
+
+### MapCanvas
+将地图加载到Qt中
+当用户坐标发生变化在地图上显示出来
+
+方法
+|Name|Type|Description|
+|-|-|-|
+|paintEvent|void|绘制地图事件|
+
+成员
+|Name|Type|Description|
+|-|-|-|
+|event|QPaintEvent *|事件|
+|list|std::vector<User *> &|用户指针数组的引用|
+
+
+### Bus
+实现校区之间的公共交通
+
+方法
+|Name|Type|Description|
+|-|-|-|
+|Bus|-|初始化|
+|getNearestTime|virtual int|获得最近的发车时间|
+|getFrom|int|获得出发点|
+|getTo|int|获得终点|
+|check|bool|检查路径起止点是否匹配|
+|FixedBus|-|初始化固定时间发车的公共交通|
+|RepeatBus|-|初始化固定时间间隔发车的公共交通|
+
+成员
+|Name|Type|Description|
+|-|-|-|
+|interval|int|时间间隔|
+
+FixedBus和RepeatBus继承自Bus类。FixedBus中getNearestTime通过调取时间表来寻找最近发车时间；ReapetBus中getNearestTime通过当前时间模时间间隔来获得发车时间。
+
 ## 项目规范
 
 序言格式，新建源代码文件使用
